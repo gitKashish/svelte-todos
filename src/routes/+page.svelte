@@ -7,6 +7,7 @@
     let filter = $state("all");
 
     let filteredTodos = $derived(filterTodos(todos));
+    let remainingTodos = $derived(todos.filter(todo => !todo.done).length)
 
     /**
      * @param {{ key: string; target: any; }} event
@@ -69,6 +70,9 @@
 
 <div class="container">
     <div class="todos">
+        <div class="heading">
+            <h1>TODO : {remainingTodos}/{todos.length}</h1>
+        </div>
         {#each filteredTodos as todo, i}
             <div class="todo">
                 {#if todo.done}
@@ -107,6 +111,12 @@
 </div>
 
 <style>
+    .heading {
+        color: #777777;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        text-align: center;
+    }
+
     .container {
         display: grid;
         gap: 1rem;
