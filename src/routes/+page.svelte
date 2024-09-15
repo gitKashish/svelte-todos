@@ -1,13 +1,21 @@
 <script>
-    let todos = $state([
-        { text: "Todo 1", done: false },
-        { text: "Todo 2", done: true },
-    ]);
-
+    /**
+     * @type {{text: string; done: boolean}[]}
+     */
+    let todos = $state([]);
     let filter = $state("all");
 
-    let filteredTodos = $derived(filterTodos(todos));
-    let remainingTodos = $derived(todos.filter(todo => !todo.done).length)
+    let filteredTodos = $derived(filterTodos());
+    let remainingTodos = $derived(remaining())
+
+    $effect (() => {
+        const savedTodos = localStorage.getItem('todos')
+        savedTodos && (todos = JSON.parse(savedTodos))
+    })
+
+    $effect (() => {
+        localStorage.setItem('todos', JSON.stringify(todos))
+    })
 
     /**
      * @param {{ key: string; target: any; }} event
@@ -53,10 +61,7 @@
         filter = newFilter;
     }
 
-    /**
-     * @param {{text: string; done: boolean;}[]} todos
-     */
-    function filterTodos(todos) {
+    function filterTodos() {
         switch (filter) {
             case "all":
                 return todos;
@@ -65,6 +70,10 @@
             case "done":
                 return todos.filter((todo) => todo.done);
         }
+    }
+
+    function remaining() {
+        return todos.filter(todo => !todo.done).length
     }
 </script>
 
