@@ -32,6 +32,15 @@
     /**
      * @param {{ target: any; }} event
      */
+     function deleteTodo(event) {
+        const todoEl = event.target
+        const index = todoEl.dataset.index
+        todos.splice(index, 1)
+    }
+
+    /**
+     * @param {{ target: any; }} event
+     */
     function editTodo(event) {
         const todoEl = event.target;
         const text = todoEl.value;
@@ -84,6 +93,13 @@
         </div>
         {#each filteredTodos as todo, i}
             <div class="todo">
+                <input
+                    class="done-toggle"
+                    onchange={toggleTodo}
+                    data-index={i}
+                    checked={todo.done}
+                    type="checkbox"
+                />
                 {#if todo.done}
                     <input
                         oninput={editTodo}
@@ -100,12 +116,11 @@
                         type="text"
                     />
                 {/if}
-                <input
-                    onchange={toggleTodo}
-                    data-index={i}
-                    checked={todo.done}
-                    type="checkbox"
-                />
+                <button 
+                class="delete-button"
+                onclick={deleteTodo} data-index={i}>
+                    🗑️
+                </button>
             </div>
         {/each}
         <div class="add-todo">
@@ -129,7 +144,8 @@
     .container {
         display: grid;
         gap: 1rem;
-        width: 50%;
+        min-width: 40ch;
+        max-width: 70ch;
         margin: auto;
     }
 
@@ -157,7 +173,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.5rem 1rem 0.5rem 0.5rem;
+        padding: 0.5rem 1rem;
         border: 1px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
@@ -184,14 +200,22 @@
     .todo > input[type="text"] {
         flex-grow: 1;
         width: 100%;
-        margin-right: 1rem;
+        margin: 0rem 1rem;
         padding: 1rem;
     }
 
-    input[type="checkbox"] {
+    .done-toggle {
         scale: 1.5;
         flex-grow: 1;
-
         margin: auto;
+    }
+
+    .delete-button {
+        aspect-ratio: 1;
+        flex-grow: 1;
+        padding: 0.75rem;
+        margin: auto;
+        border-radius: 10px;
+        border: 1px solid #777777
     }
 </style>
