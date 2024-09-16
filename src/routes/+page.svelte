@@ -1,4 +1,10 @@
 <script>
+    import "@fortawesome/fontawesome-free/css/all.min.css"
+    import "@fortawesome/fontawesome-free/js/all"
+    import { quadIn, quadOut, quintIn, quintOut } from "svelte/easing";
+    import { SvelteDate } from "svelte/reactivity";
+    import { blur, fly } from "svelte/transition";
+
     /**
      * @type {{text: string; done: boolean}[]}
      */
@@ -65,7 +71,7 @@
      * @param {any} event
      */
     function setFilter(event) {
-        const newFilter = event.target.innerText;
+        const newFilter = event.target.value;
         console.log(newFilter);
         filter = newFilter;
     }
@@ -92,7 +98,8 @@
             <h1>TODO : {remainingTodos}/{todos.length}</h1>
         </div>
         {#each filteredTodos as todo, i}
-            <div class="todo">
+            <div in:fly = {{x: -200, duration: 300, delay: 0+(i*30), easing: quadOut
+            }} out:blur =  {{duration: 200, easing: quadIn}} class="todo">
                 <input
                     class="done-toggle"
                     onchange={toggleTodo}
@@ -119,7 +126,7 @@
                 <button 
                 class="delete-button"
                 onclick={deleteTodo} data-index={i}>
-                    🗑️
+                <i class="fa-regular fa-square-minus">
                 </button>
             </div>
         {/each}
@@ -129,16 +136,22 @@
     </div>
     <div class="filters">
         {#each ["all", "active", "done"] as filter}
-            <button onclick={setFilter} class="filter"> {filter} </button>
+            <button onclick={setFilter} class="filter" value="{filter}"> {filter} </button>
         {/each}
     </div>
 </div>
 
 <style>
+    :root {
+        color-scheme: dark;
+        accent-color: #fa7a19;
+    }
+
     .heading {
         color: #777777;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         text-align: center;
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
     }
 
     .container {
@@ -161,7 +174,11 @@
     .filter {
         flex-grow: 1;
         padding: 1rem;
+        font-family: 'Poppins', sans-serif;
+        font-size: medium;
+        font-weight: 400;
         text-align: center;
+        text-transform: capitalize;
         box-sizing: border-box;
     }
 
@@ -174,7 +191,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 0.5rem 1rem;
-        border: 1px solid #ccc;
+        border: 2px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
         margin-block-start: 1rem;
@@ -185,23 +202,25 @@
         align-items: center;
         justify-content: space-between;
         padding: 0.5rem;
-        border: 1px solid #ccc;
+        border: 2px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
         margin-block-start: 1rem;
     }
 
-    .add-todo > input[type="text"] {
+    input[type="text"] {
+        font-family: 'Poppins', sans-serif;
+        font-size: medium;
+        font-weight: 400;
         flex-grow: 1;
         width: 100%;
         padding: 1rem;
+        border: 1px solid #777777;
+        border-radius: 5px;
     }
 
     .todo > input[type="text"] {
-        flex-grow: 1;
-        width: 100%;
         margin: 0rem 1rem;
-        padding: 1rem;
     }
 
     .done-toggle {
@@ -211,11 +230,16 @@
     }
 
     .delete-button {
-        aspect-ratio: 1;
+        display: flex;
+        justify-content: center;
         flex-grow: 1;
         padding: 0.75rem;
         margin: auto;
         border-radius: 10px;
-        border: 1px solid #777777
+        border: 2px solid #777777
+    }
+
+    .delete-button:hover {
+        background-color: #fa7a19;
     }
 </style>
