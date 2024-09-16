@@ -3,6 +3,7 @@
     import "@fortawesome/fontawesome-free/js/all";
     import { quadInOut } from "svelte/easing";
     import { blur, fly } from "svelte/transition";
+    import { v4 as uuidv4 } from "uuid";
 
     /**
      * @typedef {Object} Todo
@@ -52,10 +53,11 @@
      * @param {KeyboardEvent} event - The keydown event object.
      */
     function addTodo(event) {
+        console.log(event.key);
         if (event.key !== "Enter") return;
         const todoEl = event.target;
-        const id = window.crypto.randomUUID();
-        const text = todoEl.value.trim();
+        const id = uuidv4();
+        const text = todoEl?.value.trim();
         if (!text) return;
         const done = false;
         todoEl.value = "";
@@ -68,7 +70,7 @@
      * @param {MouseEvent} event - The click event object.
      */
     function deleteTodo(event) {
-        const id = event.currentTarget.dataset.id;
+        const id = event.currentTarget?.dataset.id;
         todos = todos.filter((todo) => todo.id !== id);
     }
 
@@ -182,7 +184,12 @@
             </div>
         {/each}
         <div class="add-todo">
-            <input onkeydown={addTodo} placeholder="Add todo" type="text" />
+            <input
+                onkeydown={addTodo}
+                placeholder="Add todo"
+                type="text"
+                enterkeyhint="done"
+            />
         </div>
     </div>
     <div class="filters">
