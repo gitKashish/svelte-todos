@@ -1,7 +1,7 @@
 <script>
     import "@fortawesome/fontawesome-free/css/all.min.css";
     import "@fortawesome/fontawesome-free/js/all";
-    import {quadInOut} from "svelte/easing";
+    import { quadInOut } from "svelte/easing";
     import { blur, fly } from "svelte/transition";
 
     /**
@@ -48,7 +48,7 @@
 
     /**
      * Adds a todo to the end of todo list if text string is not empty.
-     * 
+     *
      * @param {KeyboardEvent} event - The keydown event object.
      */
     function addTodo(event) {
@@ -56,7 +56,7 @@
         const todoEl = event.target;
         const id = window.crypto.randomUUID();
         const text = todoEl.value.trim();
-        if (!text) return
+        if (!text) return;
         const done = false;
         todoEl.value = "";
         todos.push({ id, text, done });
@@ -64,7 +64,7 @@
 
     /**
      * Deletes a todo item by filtering it out of the list.
-     * 
+     *
      * @param {MouseEvent} event - The click event object.
      */
     function deleteTodo(event) {
@@ -74,7 +74,7 @@
 
     /**
      * Updates the text of a specific todo item when edited.
-     * 
+     *
      * @param {InputEvent} event - The text input event object.
      */
     function editTodo(event) {
@@ -85,7 +85,7 @@
 
     /**
      * Toggles the completed status of a todo item when its checkbox is clicked.
-     * 
+     *
      * @param {InputEvent} event - The checkbox input event object.
      */
     function toggleTodo(event) {
@@ -99,7 +99,7 @@
 
     /**
      * Sets the current filter for displaying todos ('all', 'active', 'done').
-     * 
+     *
      * @param {MouseEvent} event - The click event object.
      */
     function setFilter(event) {
@@ -109,7 +109,7 @@
 
     /**
      * Filters the todo list based on the current filter state.
-     * 
+     *
      * @returns {Todo[]} - The filtered list of todos
      */
     function filterTodos() {
@@ -119,13 +119,13 @@
             case "done":
                 return todos.filter((todo) => todo.done);
             default:
-                return todos
+                return todos;
         }
     }
 
     /**
      * Counts the number of remaining (incomplete) todos.
-     * 
+     *
      * @returns {number} - The number of remaining todos.
      */
     function remaining() {
