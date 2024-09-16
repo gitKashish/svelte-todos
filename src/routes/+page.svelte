@@ -1,94 +1,135 @@
 <script>
-    import "@fortawesome/fontawesome-free/css/all.min.css"
-    import "@fortawesome/fontawesome-free/js/all"
-    import { quadIn, quadOut, quintIn, quintOut } from "svelte/easing";
-    import { SvelteDate } from "svelte/reactivity";
+    import "@fortawesome/fontawesome-free/css/all.min.css";
+    import "@fortawesome/fontawesome-free/js/all";
+    import {quadInOut} from "svelte/easing";
     import { blur, fly } from "svelte/transition";
 
     /**
-     * @type {{text: string; done: boolean}[]}
+     * @typedef {Object} Todo
+     * @property {string} id - Unique identifier for the todo item.
+     * @property {string} text - The text content of the todo item.
+     * @property {boolean} done - Indicates if the todo is marked as complete.
      */
-    let todos = $state([]);
-    let filter = $state("all");
-
-    let filteredTodos = $derived(filterTodos());
-    let remainingTodos = $derived(remaining())
-
-    $effect (() => {
-        const savedTodos = localStorage.getItem('todos')
-        savedTodos && (todos = JSON.parse(savedTodos))
-    })
-
-    $effect (() => {
-        localStorage.setItem('todos', JSON.stringify(todos))
-    })
 
     /**
-     * @param {{ key: string; target: any; }} event
+     * @type {Todo[]} - List of todos
+     */
+    let todos = $state([]);
+
+    /**
+     * @type {string} - Current filter for displaying todo ('all', 'active', 'done').
+     */
+    let filter = $state("all");
+
+    /**
+     * Derived state to filter the todos based on the current filter.
+     */
+    let filteredTodos = $derived(filterTodos());
+
+    /**
+     * Derived state to count remaining (incomplete) todos.
+     */
+    let remainingTodos = $derived(remaining());
+
+    /**
+     * Effect hook to load todos from the local storage when component is initialized.
+     */
+    $effect(() => {
+        const savedTodos = localStorage.getItem("todos");
+        savedTodos && (todos = JSON.parse(savedTodos));
+    });
+
+    /**
+     * Effect hook to save todos to local  storage whenever the todo list changes.
+     */
+    $effect(() => {
+        localStorage.setItem("todos", JSON.stringify(todos));
+    });
+
+    /**
+     * Adds a todo to the end of todo list if text string is not empty.
+     * 
+     * @param {KeyboardEvent} event - The keydown event object.
      */
     function addTodo(event) {
         if (event.key !== "Enter") return;
         const todoEl = event.target;
-        const text = todoEl.value;
+        const id = window.crypto.randomUUID();
+        const text = todoEl.value.trim();
+        if (!text) return
         const done = false;
         todoEl.value = "";
-        todos.push({ text, done });
+        todos.push({ id, text, done });
     }
 
     /**
-     * @param {{ target: any; }} event
+     * Deletes a todo item by filtering it out of the list.
+     * 
+     * @param {MouseEvent} event - The click event object.
      */
-     function deleteTodo(event) {
-        const todoEl = event.target
-        const index = todoEl.dataset.index
-        todos.splice(index, 1)
+    function deleteTodo(event) {
+        const id = event.currentTarget.dataset.id;
+        todos = todos.filter((todo) => todo.id !== id);
     }
 
     /**
-     * @param {{ target: any; }} event
+     * Updates the text of a specific todo item when edited.
+     * 
+     * @param {InputEvent} event - The text input event object.
      */
     function editTodo(event) {
-        const todoEl = event.target;
-        const text = todoEl.value;
-        const index = todoEl.dataset.index;
-
-        todos[index].text = text;
+        const id = event.currentTarget?.dataset.id;
+        const index = todos.findIndex((todo) => todo.id === id);
+        todos[index].text = event.currentTarget?.value;
     }
 
     /**
-     *
-     * @param {{ target: any; }} event
+     * Toggles the completed status of a todo item when its checkbox is clicked.
+     * 
+     * @param {InputEvent} event - The checkbox input event object.
      */
     function toggleTodo(event) {
         const todoEl = event.target;
         const done = todoEl.checked;
-        const index = todoEl.dataset.index;
-
+        const id = todoEl.dataset.id;
+        const index = todos.findIndex((todo) => todo.id === id);
         todos[index].done = done;
+        todoEl.checked = !done;
     }
 
     /**
-     * @param {any} event
+     * Sets the current filter for displaying todos ('all', 'active', 'done').
+     * 
+     * @param {MouseEvent} event - The click event object.
      */
     function setFilter(event) {
-        const newFilter = event.target.value;
-        console.log(newFilter);
+        const newFilter = event.currentTarget?.value;
         filter = newFilter;
     }
 
+    /**
+     * Filters the todo list based on the current filter state.
+     * 
+     * @returns {Todo[]} - The filtered list of todos
+     */
     function filterTodos() {
         switch (filter) {
-            case "all":
-                return todos;
             case "active":
                 return todos.filter((todo) => !todo.done);
             case "done":
                 return todos.filter((todo) => todo.done);
+            default:
+                return todos
         }
     }
 
+    /**
+     * Counts the number of remaining (incomplete) todos.
+     * 
+     * @returns {number} - The number of remaining todos.
+     */
     function remaining() {
-        return todos.filter(todo => !todo.done).length
+        return todos.filter((todo) => !todo.done).length;
     }
 </script>
 
@@ -98,19 +139,27 @@
             <h1>TODO : {remainingTodos}/{todos.length}</h1>
         </div>
         {#each filteredTodos as todo, i}
-            <div in:fly = {{x: -200, duration: 300, delay: 0+(i*30), easing: quadOut
-            }} out:blur =  {{duration: 200, easing: quadIn}} class="todo">
+            <div
+                in:fly={{
+                    x: -200,
+                    duration: 300,
+                    delay: 0 + i * 30,
+                    easing: quadInOut,
+                }}
+                out:blur={{ duration: 250, easing: quadInOut }}
+                class="todo"
+            >
                 <input
                     class="done-toggle"
                     onchange={toggleTodo}
-                    data-index={i}
+                    data-id={todo.id}
                     checked={todo.done}
                     type="checkbox"
                 />
                 {#if todo.done}
                     <input
                         oninput={editTodo}
-                        data-index={i}
+                        data-id={todo.id}
                         value={todo.text}
                         type="text"
                         disabled="true"
@@ -118,16 +167,18 @@
                 {:else}
                     <input
                         oninput={editTodo}
-                        data-index={i}
+                        data-id={todo.id}
                         value={todo.text}
                         type="text"
                     />
                 {/if}
-                <button 
-                class="delete-button"
-                onclick={deleteTodo} data-index={i}>
-                <i class="fa-regular fa-square-minus">
-                </button>
+                <button
+                    class="delete-button"
+                    onclick={deleteTodo}
+                    data-id={todo.id}
+                >
+                    <i class="fa-regular fa-square-minus"> </i></button
+                >
             </div>
         {/each}
         <div class="add-todo">
@@ -136,7 +187,9 @@
     </div>
     <div class="filters">
         {#each ["all", "active", "done"] as filter}
-            <button onclick={setFilter} class="filter" value="{filter}"> {filter} </button>
+            <button onclick={setFilter} class="filter" value={filter}>
+                {filter}
+            </button>
         {/each}
     </div>
 </div>
@@ -174,7 +227,7 @@
     .filter {
         flex-grow: 1;
         padding: 1rem;
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         font-size: medium;
         font-weight: 400;
         text-align: center;
@@ -209,7 +262,7 @@
     }
 
     input[type="text"] {
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         font-size: medium;
         font-weight: 400;
         flex-grow: 1;
@@ -236,7 +289,7 @@
         padding: 0.75rem;
         margin: auto;
         border-radius: 10px;
-        border: 2px solid #777777
+        border: 2px solid #777777;
     }
 
     .delete-button:hover {
