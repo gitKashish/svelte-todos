@@ -2,7 +2,7 @@
 
 A minimalist web app to track you tasks ✨
 
-![Todo (Phone)](https://github.com/user-attachments/assets/22c91ba5-0053-4dfe-909a-1f7e319319a6)
+![Todo](https://github.com/user-attachments/assets/28cf23b6-2777-4401-9d67-82f90cdcfb26)
 
 ## Features
 1. **Create** Todo tasks.
