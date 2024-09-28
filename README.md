@@ -1,33 +1,46 @@
-# create-svelte
+# Todos with Svelte 5
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+A minimalist web app to track you tasks ✨
 
-## Creating a project
+![Todo](https://github.com/user-attachments/assets/28cf23b6-2777-4401-9d67-82f90cdcfb26)
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
+1. **Create** Todo tasks.
+2. **Edit** existing tasks.
+3. **Mark** todo as "Done".
+4. **Filter** todos ('All', 'Active', 'Done').
+5. Persistent storage with `window.localStorage`.
+
+## Cloning the project
+
+To customize or work on this yourself, clone the repo. `Node.js` is a prerequisite (Node v20.16.0 used in development):
 
 ```bash
 # create a new project in the current directory
-npm create svelte@latest
+git clone https://github.com/gitKashish/svelte-todos
 
-# create a new project in my-app
-npm create svelte@latest my-app
+# follow up steps to install dependencies
+cd svelte-todos
+npm install
 ```
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've cloned the repo and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
 npm run dev
 
 # or start the server and open the app in a new browser tab
 npm run dev -- --open
+
+# or start the server and expose the app to the devices on the network
+npm run dev -- --host
 ```
 
 ## Building
 
-To create a production version of your app:
+To create a production version of the app:
 
 ```bash
 npm run build
