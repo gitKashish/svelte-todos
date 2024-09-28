@@ -53,7 +53,6 @@
      * @param {KeyboardEvent} event - The keydown event object.
      */
     function addTodo(event) {
-        console.log(event.key);
         if (event.key !== "Enter") return;
         const todoEl = event.target;
         const id = uuidv4();
