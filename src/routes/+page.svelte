@@ -20,7 +20,7 @@
     /**
      * @type {string} - Current filter for displaying todo ('all', 'active', 'done').
      */
-    let filter = $state("all");
+    let filter = $state("active");
 
     /**
      * Derived state to filter the todos based on the current filter.
