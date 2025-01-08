@@ -1,6 +1,6 @@
 # Todos with Svelte 5
 
-A minimalist web app to track you tasks ✨
+A minimalist web app to track you tasks with local storage ✨
 
 ![Todo](https://github.com/user-attachments/assets/28cf23b6-2777-4401-9d67-82f90cdcfb26)
 
